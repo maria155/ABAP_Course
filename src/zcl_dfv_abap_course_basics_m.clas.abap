@@ -15,10 +15,10 @@ ENDCLASS.
 
 CLASS zcl_dfv_abap_course_basics_m IMPLEMENTATION.
 
-
   METHOD if_oo_adt_classrun~main.
+* testing for hello_world
+    out->write( zif_abap_course_basics~hello_world( 'Maria' ) ).
   ENDMETHOD.
-
 
   METHOD zif_abap_course_basics~calculator.
   ENDMETHOD.
@@ -37,8 +37,10 @@ CLASS zcl_dfv_abap_course_basics_m IMPLEMENTATION.
 
 
   METHOD zif_abap_course_basics~hello_world.
+    DATA lv_message TYPE string.
+    lv_message = |Hello { iv_name }, your system user is { sy-uname }.|.
+    rv_result = lv_message.
   ENDMETHOD.
-
 
   METHOD zif_abap_course_basics~internal_tables.
   ENDMETHOD.
