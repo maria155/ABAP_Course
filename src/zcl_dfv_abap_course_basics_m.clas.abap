@@ -41,6 +41,9 @@ CLASS zcl_dfv_abap_course_basics_m IMPLEMENTATION.
       ENDIF.
 
       out->write( lv_message ).
+
+* testing for fizz_buzz
+      out->write( zif_abap_course_basics~fizz_buzz( ) ).
   ENDMETHOD.
 
 
@@ -68,6 +71,29 @@ CLASS zcl_dfv_abap_course_basics_m IMPLEMENTATION.
 
 
   METHOD zif_abap_course_basics~fizz_buzz.
+    DATA number TYPE i.
+    number = 1.
+    rv_result = ''.
+
+    DO 100 TIMES.
+    DATA lv_text TYPE string.
+
+    IF number MOD 3 = 0 AND number MOD 5 = 0.
+        lv_text = 'FizzBuzz'.
+    ELSEIF number MOD 5 = 0.
+        lv_text = 'Buzz'.
+    ELSEIF number MOD 3 = 0.
+        lv_text = 'Fizz'.
+    ELSE.
+        lv_text = number.
+    ENDIF.
+
+    rv_result = |{ rv_result } { lv_text }|.
+    number = number + 1.
+    ENDDO.
+
+    rv_result = condense( rv_result ).
+
   ENDMETHOD.
 
 
