@@ -53,6 +53,44 @@ CLASS zcl_dfv_abap_course_basics_m IMPLEMENTATION.
 
 * testing for get_current_date_time
       out->write( zif_abap_course_basics~get_current_date_time( ) ).
+
+* testing for internal_tables
+  DATA: lt_task7_1 TYPE zif_abap_course_basics~ltty_travel_id,
+        lt_task7_2 TYPE zif_abap_course_basics~ltty_travel_id,
+        lt_task7_3 TYPE zif_abap_course_basics~ltty_travel_id.
+
+      zif_abap_course_basics~internal_tables(
+        IMPORTING
+          et_travel_ids_task7_1 = lt_task7_1
+          et_travel_ids_task7_2 = lt_task7_2
+          et_travel_ids_task7_3 = lt_task7_3
+      ).
+
+      out->write( 'New Table 1:' ).
+      out->write( lt_task7_1 ).
+      out->write( 'New Table 2:' ).
+      out->write( lt_task7_2 ).
+      out->write( 'New Table 3:' ).
+      out->write( lt_task7_3 ).
+
+* testing for open_sql
+  DATA: lt_task8_1 TYPE zif_abap_course_basics~ltty_travel_id,
+        lt_task8_2 TYPE zif_abap_course_basics~ltty_travel_id,
+        lt_task8_3 TYPE zif_abap_course_basics~ltty_travel_id.
+
+      zif_abap_course_basics~open_sql(
+        IMPORTING
+          et_travel_ids_task8_1 = lt_task8_1
+          et_travel_ids_task8_2 = lt_task8_2
+          et_travel_ids_task8_3 = lt_task8_3
+      ).
+
+      out->write( 'New Table 1:' ).
+      out->write( lt_task7_1 ).
+      out->write( 'New Table 2:' ).
+      out->write( lt_task7_2 ).
+      out->write( 'New Table 3:' ).
+      out->write( lt_task7_3 ).
   ENDMETHOD.
 
 
@@ -116,7 +154,6 @@ CLASS zcl_dfv_abap_course_basics_m IMPLEMENTATION.
     ENDTRY.
 
     rv_result = lv_year && lv_day && lv_month.
-
   ENDMETHOD.
 
 
@@ -143,7 +180,6 @@ CLASS zcl_dfv_abap_course_basics_m IMPLEMENTATION.
     ENDDO.
 
     rv_result = condense( rv_result ).
-
   ENDMETHOD.
 
 
@@ -152,19 +188,84 @@ CLASS zcl_dfv_abap_course_basics_m IMPLEMENTATION.
     rv_result = lv_timestamp.
   ENDMETHOD.
 
-
   METHOD zif_abap_course_basics~hello_world.
-    DATA lv_message TYPE string.
-    lv_message = |Hello { iv_name }, your system user is { sy-uname }.|.
-    rv_result = lv_message.
+    rv_result = |Hello { iv_name }, your system user is { sy-uname }.|.
   ENDMETHOD.
 
 
   METHOD zif_abap_course_basics~internal_tables.
+    SELECT COUNT(*) FROM ztravel_maa INTO @DATA(lv_count).
+
+    IF lv_count = 0.
+        DELETE FROM ZTRAVEL_MAA.
+        COMMIT WORK AND WAIT.
+        INSERT ztravel_maa FROM
+          ( SELECT FROM /dmo/travel
+              FIELDS uuid( )          AS travel_uuid,
+                     travel_id        AS travel_id,
+                     agency_id        AS agency_id,
+                     customer_id      AS customer_id,
+                     begin_date       AS begin_date,
+                     end_date         AS end_date,
+                     booking_fee      AS booking_fee,
+                     total_price      AS total_price,
+                     currency_code    AS currency_code,
+                     description      AS description,
+                     CASE status
+                       WHEN 'B' THEN 'A'  " ACCEPTED
+                       WHEN 'X' THEN 'X'  " CANCELLED
+                       ELSE 'O'           " open
+                     END AS overall_status,
+                     createdby        AS createdby,
+                     createdat        AS createdat,
+                     lastchangedby    AS last_changed_by,
+                     lastchangedat    AS last_changed_at
+              ORDER BY travel_id ).
+
+        COMMIT WORK AND WAIT.
+    ENDIF.
+
+    SELECT * FROM ztravel_maa INTO TABLE @DATA(lt_ztravel_maa).
+
+    LOOP AT lt_ztravel_maa INTO DATA(lv_agency_travels).
+      IF lv_agency_travels-agency_id = '070001' AND lv_agency_travels-booking_fee = 20 AND lv_agency_travels-currency_code = 'JPY'.
+        APPEND VALUE #( travel_id = lv_agency_travels-travel_id ) TO et_travel_ids_task7_1.
+      ENDIF.
+    ENDLOOP.
+
+    LOOP AT lt_ztravel_maa INTO DATA(lv_price_travels).
+      IF lv_price_travels-total_price > 2000 AND lv_price_travels-currency_code = 'USD'.
+        APPEND VALUE #( travel_id = lv_price_travels-travel_id ) TO et_travel_ids_task7_2.
+      ENDIF.
+    ENDLOOP.
+
+    DELETE lt_ztravel_maa WHERE currency_code <> 'EUR'.
+
+    SORT lt_ztravel_maa BY total_price ASCENDING begin_date ASCENDING.
+
+    DO 10 TIMES.
+        APPEND VALUE #( travel_id = lt_ztravel_maa[ sy-index ]-travel_id ) TO et_travel_ids_task7_3.
+    ENDDO.
   ENDMETHOD.
 
 
   METHOD zif_abap_course_basics~open_sql.
+    SELECT travel_id
+    FROM ztravel_maa
+    WHERE agency_id = '070001' AND booking_fee = 20 AND currency_code = 'JPY'
+    INTO TABLE @et_travel_ids_task8_1.
+
+    SELECT travel_id
+    FROM ztravel_maa
+    WHERE total_price > 2000 AND currency_code = 'USD'
+    INTO TABLE @et_travel_ids_task8_2.
+
+    SELECT travel_id
+    FROM ztravel_maa
+    WHERE currency_code = 'EUR'
+    ORDER BY total_price ASCENDING, begin_date ASCENDING
+    INTO TABLE @et_travel_ids_task8_3
+    UP TO 10 ROWS.
   ENDMETHOD.
 
 
@@ -214,7 +315,6 @@ CLASS zcl_dfv_abap_course_basics_m IMPLEMENTATION.
   ENDDO.
 
     rv_result = lv_score.
-
   ENDMETHOD.
 
 ENDCLASS.
