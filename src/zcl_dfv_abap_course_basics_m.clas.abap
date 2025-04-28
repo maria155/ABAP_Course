@@ -47,8 +47,12 @@ CLASS zcl_dfv_abap_course_basics_m IMPLEMENTATION.
 
 * testing for date_parsing
       out->write( zif_abap_course_basics~date_parsing( '12 May 2017' ) ).
+
 * testing for scrabble_score
       out->write( zif_abap_course_basics~scrabble_score( 'AbCEz' ) ).
+
+* testing for get_current_date_time
+      out->write( zif_abap_course_basics~get_current_date_time( ) ).
   ENDMETHOD.
 
 
@@ -144,8 +148,8 @@ CLASS zcl_dfv_abap_course_basics_m IMPLEMENTATION.
 
 
   METHOD zif_abap_course_basics~get_current_date_time.
-
-
+    GET TIME STAMP FIELD DATA(lv_timestamp).
+    rv_result = lv_timestamp.
   ENDMETHOD.
 
 
@@ -170,14 +174,14 @@ CLASS zcl_dfv_abap_course_basics_m IMPLEMENTATION.
           lv_tmp_word TYPE string,
           lv_index  TYPE i.
 
-  lv_tmp_word = iv_word.
-  TRANSLATE lv_tmp_word TO UPPER CASE.
+    lv_tmp_word = iv_word.
+    TRANSLATE lv_tmp_word TO UPPER CASE.
 
-  DO strlen( lv_tmp_word ) TIMES.
-    lv_index = sy-index - 1.
-    lv_letter = lv_tmp_word+lv_index(1).
+    DO strlen( lv_tmp_word ) TIMES.
+      lv_index = sy-index - 1.
+      lv_letter = lv_tmp_word+lv_index(1).
 
-    CASE lv_letter.
+    CASE lv_letter.                         " I had a problem with casting so I did it in this way
       WHEN 'A'. lv_score = lv_score + 1.
       WHEN 'B'. lv_score = lv_score + 2.
       WHEN 'C'. lv_score = lv_score + 3.
@@ -209,7 +213,7 @@ CLASS zcl_dfv_abap_course_basics_m IMPLEMENTATION.
     ENDCASE.
   ENDDO.
 
-  rv_result = lv_score.
+    rv_result = lv_score.
 
   ENDMETHOD.
 
