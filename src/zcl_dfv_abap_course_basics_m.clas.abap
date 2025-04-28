@@ -47,6 +47,8 @@ CLASS zcl_dfv_abap_course_basics_m IMPLEMENTATION.
 
 * testing for date_parsing
       out->write( zif_abap_course_basics~date_parsing( '12 May 2017' ) ).
+* testing for scrabble_score
+      out->write( zif_abap_course_basics~scrabble_score( 'AbCEz' ) ).
   ENDMETHOD.
 
 
@@ -75,45 +77,41 @@ CLASS zcl_dfv_abap_course_basics_m IMPLEMENTATION.
           lv_month        TYPE i,
           lv_year         TYPE i.
 
-  SPLIT iv_date AT space INTO TABLE lt_string_parts.
+    SPLIT iv_date AT space INTO TABLE lt_string_parts.
 
-  IF lines( lt_string_parts ) <> 3.
-    RAISE EXCEPTION TYPE cx_sy_conversion_no_number.
-  ENDIF.
+    IF lines( lt_string_parts ) <> 3.
+      RAISE EXCEPTION TYPE cx_sy_conversion_no_number.
+    ENDIF.
 
-  " Read day, month, year
-  READ TABLE lt_string_parts INDEX 1 INTO DATA(lv_day_string).
-  READ TABLE lt_string_parts INDEX 2 INTO DATA(lv_month_string).
-  READ TABLE lt_string_parts INDEX 3 INTO DATA(lv_year_string).
+    READ TABLE lt_string_parts INDEX 1 INTO DATA(lv_day_string).
+    READ TABLE lt_string_parts INDEX 2 INTO DATA(lv_month_string).
+    READ TABLE lt_string_parts INDEX 3 INTO DATA(lv_year_string).
 
-  lv_day = lv_day_string.
-  lv_year = lv_year_string.
+    lv_day = lv_day_string.
+    lv_year = lv_year_string.
 
-  TRY.
-      lv_month = lv_month_string.
-    CATCH cx_sy_conversion_no_number.
-      CASE to_upper( lv_month_string ).
-        WHEN 'JANUARY'.   lv_month = 1.
-        WHEN 'FEBRUARY'.  lv_month = 2.
-        WHEN 'MARCH'.     lv_month = 3.
-        WHEN 'APRIL'.     lv_month = 4.
-        WHEN 'MAY'.       lv_month = 5.
-        WHEN 'JUNE'.      lv_month = 6.
-        WHEN 'JULY'.      lv_month = 7.
-        WHEN 'AUGUST'.    lv_month = 8.
-        WHEN 'SEPTEMBER'. lv_month = 9.
-        WHEN 'OCTOBER'.   lv_month = 10.
-        WHEN 'NOVEMBER'.  lv_month = 11.
-        WHEN 'DECEMBER'.  lv_month = 12.
-        WHEN OTHERS.
-          RAISE EXCEPTION TYPE cx_sy_conversion_no_number.
-      ENDCASE.
-  ENDTRY.
+    TRY.
+        lv_month = lv_month_string.
+      CATCH cx_sy_conversion_no_number.
+        CASE to_upper( lv_month_string ).
+          WHEN 'JANUARY'.   lv_month = 1.
+          WHEN 'FEBRUARY'.  lv_month = 2.
+          WHEN 'MARCH'.     lv_month = 3.
+          WHEN 'APRIL'.     lv_month = 4.
+          WHEN 'MAY'.       lv_month = 5.
+          WHEN 'JUNE'.      lv_month = 6.
+          WHEN 'JULY'.      lv_month = 7.
+          WHEN 'AUGUST'.    lv_month = 8.
+          WHEN 'SEPTEMBER'. lv_month = 9.
+          WHEN 'OCTOBER'.   lv_month = 10.
+          WHEN 'NOVEMBER'.  lv_month = 11.
+          WHEN 'DECEMBER'.  lv_month = 12.
+          WHEN OTHERS.
+            RAISE EXCEPTION TYPE cx_sy_conversion_no_number.
+        ENDCASE.
+    ENDTRY.
 
-    DATA lv_space TYPE string.
-    lv_space = ''.
     rv_result = lv_year && lv_day && lv_month.
-
 
   ENDMETHOD.
 
@@ -167,5 +165,52 @@ CLASS zcl_dfv_abap_course_basics_m IMPLEMENTATION.
 
 
   METHOD zif_abap_course_basics~scrabble_score.
+    DATA: lv_letter TYPE c LENGTH 1,
+          lv_score  TYPE i VALUE 0,
+          lv_tmp_word TYPE string,
+          lv_index  TYPE i.
+
+  lv_tmp_word = iv_word.
+  TRANSLATE lv_tmp_word TO UPPER CASE.
+
+  DO strlen( lv_tmp_word ) TIMES.
+    lv_index = sy-index - 1.
+    lv_letter = lv_tmp_word+lv_index(1).
+
+    CASE lv_letter.
+      WHEN 'A'. lv_score = lv_score + 1.
+      WHEN 'B'. lv_score = lv_score + 2.
+      WHEN 'C'. lv_score = lv_score + 3.
+      WHEN 'D'. lv_score = lv_score + 4.
+      WHEN 'E'. lv_score = lv_score + 5.
+      WHEN 'F'. lv_score = lv_score + 6.
+      WHEN 'G'. lv_score = lv_score + 7.
+      WHEN 'H'. lv_score = lv_score + 8.
+      WHEN 'I'. lv_score = lv_score + 9.
+      WHEN 'J'. lv_score = lv_score + 10.
+      WHEN 'K'. lv_score = lv_score + 11.
+      WHEN 'L'. lv_score = lv_score + 12.
+      WHEN 'M'. lv_score = lv_score + 13.
+      WHEN 'N'. lv_score = lv_score + 14.
+      WHEN 'O'. lv_score = lv_score + 15.
+      WHEN 'P'. lv_score = lv_score + 16.
+      WHEN 'Q'. lv_score = lv_score + 17.
+      WHEN 'R'. lv_score = lv_score + 18.
+      WHEN 'S'. lv_score = lv_score + 19.
+      WHEN 'T'. lv_score = lv_score + 20.
+      WHEN 'U'. lv_score = lv_score + 21.
+      WHEN 'V'. lv_score = lv_score + 22.
+      WHEN 'W'. lv_score = lv_score + 23.
+      WHEN 'X'. lv_score = lv_score + 24.
+      WHEN 'Y'. lv_score = lv_score + 25.
+      WHEN 'Z'. lv_score = lv_score + 26.
+      WHEN OTHERS.
+        RAISE EXCEPTION TYPE cx_sy_conversion_no_number.
+    ENDCASE.
+  ENDDO.
+
+  rv_result = lv_score.
+
   ENDMETHOD.
+
 ENDCLASS.
