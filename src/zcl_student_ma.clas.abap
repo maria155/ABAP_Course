@@ -1,14 +1,21 @@
-class ZCL_STUDENT_MA definition
-  public
-  final
-  create public .
+CLASS zcl_student_ma DEFINITION
+  PUBLIC
+  FINAL
+  CREATE PUBLIC .
 
-public section.
-protected section.
-private section.
+  PUBLIC SECTION.
+
+  PROTECTED SECTION.
+
+  PRIVATE SECTION.
+  DATA: student_id TYPE i,
+        university_id TYPE i,
+        name TYPE string,
+        age TYPE i,
+        major TYPE string,
+        email TYPE string.
 ENDCLASS.
 
 
-
-CLASS ZCL_STUDENT_MA IMPLEMENTATION.
+CLASS zcl_student_ma IMPLEMENTATION.
 ENDCLASS.
