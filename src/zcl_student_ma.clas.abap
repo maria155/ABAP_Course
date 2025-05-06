@@ -32,6 +32,10 @@ CLASS zcl_student_ma DEFINITION
                   iv_major      TYPE string
                   iv_email      TYPE string,
 
+      get_student
+        IMPORTING iv_student_id TYPE i
+        RETURNING VALUE(rs_student) TYPE ty_student,
+
       get_all_students
         RETURNING VALUE(rt_students) TYPE ty_student_table,
 
@@ -102,6 +106,13 @@ CLASS zcl_student_ma IMPLEMENTATION.
   METHOD get_email.
     rv_email = email.
   ENDMETHOD.
+
+  METHOD get_student.
+    CLEAR rs_student.
+    LOOP AT gt_students INTO rs_student WHERE student_id = iv_student_id.
+     EXIT.
+    ENDLOOP.
+ENDMETHOD.
 
   METHOD get_all_students.
     rt_students = gt_students.
