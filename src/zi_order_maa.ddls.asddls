@@ -1,12 +1,5 @@
-@AbapCatalog.viewEnhancementCategory: [#NONE]
 @AccessControl.authorizationCheck: #NOT_REQUIRED
 @EndUserText.label: 'Order Interface View'
-
-@ObjectModel.usageType: {
-  serviceQuality: #X,
-  sizeCategory: #S,
-  dataClass: #MIXED
-}
 
 define view entity ZI_ORDER_MAA 
     as select from zorder_maa as _Order

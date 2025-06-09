@@ -1,6 +1,5 @@
 @AccessControl.authorizationCheck: #NOT_REQUIRED
 @EndUserText.label: 'Item Consumption View'
-@Metadata.allowExtensions: true
 
 define view entity ZC_ITEM_MAA 
     as projection on ZR_ITEM_MAA

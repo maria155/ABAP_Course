@@ -1,6 +1,5 @@
 @AccessControl.authorizationCheck: #NOT_REQUIRED
 @EndUserText.label: 'Order Consumption View'
-@Metadata.allowExtensions: true
 
 define root view entity ZC_ORDER_MAA 
     provider contract transactional_query
@@ -10,6 +9,7 @@ define root view entity ZC_ORDER_MAA
         OrderID,
         Name,
         Status,
+        @Consumption.valueHelpDefinition: [{ entity: { name: 'ZVH_CUSTOMER_MAA', element: 'CustomerID' } }]
         Customer,
         CreationDate,
         CancellationDate,

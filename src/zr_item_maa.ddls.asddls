@@ -1,12 +1,5 @@
-@AbapCatalog.viewEnhancementCategory: [#NONE]
 @AccessControl.authorizationCheck: #NOT_REQUIRED
 @EndUserText.label: 'Item Transactional View'
-
-@ObjectModel.usageType: {
-  serviceQuality: #X,
-  sizeCategory: #S,
-  dataClass: #MIXED
-}
 
 define view entity ZR_ITEM_MAA 
     as select from ZI_ITEM_MAA
